@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Switch } from '@headlessui/react';
-import { Mic, MicOff, Play, Save } from 'lucide-react';
+import { Mic, MicOff } from 'lucide-react';
 import { useWebSocket } from '@/context/WebSocketContext';
+import RealWaveform from './RealWaveform'; // ✅ Thay FakeWaveform
+import CanvasWaveform from './CanvasWaveform';
 
 export default function Recorder() {
   const [recognitionMode, setRecognitionMode] = useState(true);
@@ -13,7 +15,6 @@ export default function Recorder() {
   const audioChunks = useRef<Blob[]>([]);
   const ws = useRef<WebSocket | null>(null);
 
-  // ✅ Lấy từ context
   const { sendAudio } = useWebSocket();
 
   const startRecording = async () => {
@@ -35,16 +36,14 @@ export default function Recorder() {
         setAudioURL(audioUrl);
 
         console.log('🎧 Ghi xong, chuẩn bị gửi...');
-
         const buffer = await audioBlob.arrayBuffer();
-        sendAudio(buffer); // ✅ Gửi thông qua hàm context
+        sendAudio(buffer);
       };
 
       mediaRecorder.start();
       setIsRecording(true);
       console.log('🔴 Bắt đầu ghi âm');
 
-      // ⏱️ Dừng ghi âm sau 5 giây
       setTimeout(() => {
         stopRecording();
       }, 6000);
@@ -61,7 +60,6 @@ export default function Recorder() {
 
   return (
     <div className="w-full">
-      {/* Recording Panel */}
       <div className="col-span-2 bg-white shadow-md rounded-xl p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Record audio and recognize voice</h2>
@@ -85,6 +83,7 @@ export default function Recorder() {
 
         {/* Mic status */}
         <div className="flex flex-col items-center justify-center text-center h-60 text-gray-400">
+          {/* Icon và trạng thái ghi âm */}
           {isRecording ? (
             <>
               <Mic size={64} strokeWidth={1.5} className="text-red-500 animate-pulse" />
@@ -96,15 +95,21 @@ export default function Recorder() {
               <p className="mt-3 text-base">Hệ thống đang tắt chế độ nhận diện</p>
             </>
           )}
+
+          {/* ✅ Sóng âm ở dưới cùng */}
+          <div className="mt-4 w-full">
+            <CanvasWaveform active={isRecording} reset={!isRecording} />
+            {/* <RealWaveform active={isRecording} reset={!isRecording} /> */}
+          </div>
         </div>
 
         {/* Control Buttons */}
-        <div className="flex justify-between items-center mt-6">
+        <div className="flex justify-center items-center mt-6 gap-6 flex-wrap">
           <button
             onClick={isRecording ? stopRecording : startRecording}
-            className={`px-6 py-2 ${
+            className={`px-8 py-3.5 ${
               isRecording ? 'bg-red-500 hover:bg-red-600' : 'bg-[#6B7280] hover:bg-[#4B5563]'
-            } text-white rounded-md shadow flex items-center gap-2 transition`}
+            } text-white rounded-full shadow flex items-center gap-2 transition`}
           >
             {isRecording ? (
               <>

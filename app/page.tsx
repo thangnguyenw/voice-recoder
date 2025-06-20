@@ -1,5 +1,5 @@
 // app/page.tsx
-import Recorder from '@/components/Recorder';
+import Recorder from '@/components/Recorder/Recorder';
 
 export default function Home() {
   return <Recorder />;
