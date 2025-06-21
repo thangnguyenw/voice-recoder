@@ -10,10 +10,11 @@ export default function CanvasWaveform({
   reset: boolean;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
-  const dataArrayRef = useRef<Uint8Array>();
-  const animationRef = useRef<number>();
+  const dataArrayRef = useRef<Uint8Array | null>(null);
+  const animationRef = useRef<number | null>(null);
 
   const draw = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
     if (!analyserRef.current || !dataArrayRef.current) return;
@@ -61,16 +62,25 @@ export default function CanvasWaveform({
   useEffect(() => {
     if (!active) {
       cancelAnimationFrame(animationRef.current!);
+
       if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
         audioContextRef.current.close().catch((e) => {
           console.warn('AudioContext close error:', e);
         });
       }
+
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
+
       return;
     }
 
     const start = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+
       const audioCtx = new AudioContext();
       const analyser = audioCtx.createAnalyser();
       analyser.fftSize = 256;
@@ -97,8 +107,13 @@ export default function CanvasWaveform({
           console.warn('AudioContext close error:', e);
         });
       }
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
     };
   }, [active]);
+
 
   // Reset waveform
   useEffect(() => {

@@ -1,113 +1,47 @@
-// "use client";
-
-// import { useState, useEffect } from "react";
-// import styles from "./Tachometer.module.css";
-
-// const Tachometer = () => {
-//   const [speed, setSpeed] = useState<number>(0);
-
-//   useEffect(() => {
-//     let animationFrame: number;
-
-//     const animate = () => {
-//       setSpeed((prevSpeed) => {
-//         if (prevSpeed < 180) {
-//           // Tăng dần đến 180
-//           return Math.min(prevSpeed + 1, 180);
-//         } else if (prevSpeed > 0) {
-//           // Giảm dần về 0
-//           return Math.max(prevSpeed - 1, 0);
-//         }
-//         return prevSpeed; // Giữ nguyên khi đạt 0
-//       });
-
-//       animationFrame = requestAnimationFrame(animate);
-//     };
-
-//     animationFrame = requestAnimationFrame(animate);
-
-//     return () => cancelAnimationFrame(animationFrame);
-//   }, []);
-
-//   const rotateStyle = {
-//     transform: `rotate(${speed * 1.5 + 90}deg)`, // Điều chỉnh góc bắt đầu từ -90 độ
-//   };
-
-//   return (
-//     <div className={styles.tachometer}>
-//       <div className={styles.dial}>
-//         <div className={styles.markings}>
-//           {[0, 20, 40, 60, 80, 100, 120, 140, 160, 180].map((mark) => (
-//             <span
-//               key={mark}
-//               className={`${styles.mark} ${mark >= 120 ? styles.redZone : ""}`}
-//               style={{ transform: `rotate(${mark}deg)` }} // Điều chỉnh góc quay của số
-//             >
-//               {mark}
-//             </span>
-//           ))}
-//         </div>
-//         <div className={styles.needle} style={rotateStyle}></div>
-//         <div className={styles.center}></div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Tachometer;
-
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./Tachometer.module.css";
+import { useWebSocket } from "@/context/WebSocketContext";
 
 const Tachometer = () => {
+  const { motorRpm } = useWebSocket(); // lấy rpm (đã chuẩn hóa từ 0 → 240)
   const [speed, setSpeed] = useState<number>(0);
+  const animationRef = useRef<number| null>(null);
 
   useEffect(() => {
-    let animationFrame: number;
-    let direction: 'forward' | 'backward' = 'forward';
-
     const animate = () => {
-      setSpeed((prevSpeed) => {
-        let nextSpeed = prevSpeed;
-        if (direction === 'forward') {
-          nextSpeed = prevSpeed + 1;
-          if (nextSpeed >= 195) {
-            direction = 'backward';
-          }
-        } else {
-          nextSpeed = prevSpeed - 1;
-          if (nextSpeed <= -15) {
-            direction = 'forward';
-          }
-        }
-        return nextSpeed;
+      setSpeed((prev) => {
+        if (motorRpm == null) return prev;
+        const diff = motorRpm - prev;
+        const step = diff * 0.1;
+        if (Math.abs(step) < 0.5) return motorRpm;
+        return prev + step;
       });
 
-      animationFrame = requestAnimationFrame(animate);
+      animationRef.current = requestAnimationFrame(animate);
     };
 
-    animationFrame = requestAnimationFrame(animate);
+    animationRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationRef.current!);
+  }, [motorRpm]);
 
-    return () => cancelAnimationFrame(animationFrame);
-  }, []);
-
+  // Góc quay = speed + offset 45 độ như bạn đang dùng
   const rotateStyle = {
-    transform: `rotate(${speed + 90}deg)`, // Góc quay từ 0 đến 360 rồi -180 đến 0
+    transform: `rotate(${speed + 60}deg)`,
   };
 
   return (
     <div className={styles.tachometer}>
       <div className={styles.dial}>
         <div className={styles.markings}>
-          {[0, 20, 40, 60, 80, 100, 120, 140, 160, 180].map((mark) => (
+          {[0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240].map((mark) => (
             <span
               key={mark}
-              className={`${styles.mark} ${mark >= 120 ? styles.redZone : ""}`}
-              style={{ transform: `rotate(${mark}deg)` }} // Góc quay của số
+              className={`${styles.mark} ${mark >= 160 ? styles.redZone : ""}`}
+              style={{ transform: `rotate(${mark-30}deg)` }} // Góc quay của số
             >
-              {mark}
+              {mark*3}
             </span>
           ))}
         </div>

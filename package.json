@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "tauri:build": "tauri build && copy src-tauri/target/release/bundle/nsis/voice-recorder*.exe src-tauri/builds/nsis/voice-recorder21_6.exe"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",

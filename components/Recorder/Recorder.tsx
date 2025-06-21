@@ -11,7 +11,7 @@ export default function Recorder() {
   const [isRecording, setIsRecording] = useState(false);
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  // const streamRef = useRef<MediaStream | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const audioChunks = useRef<Blob[]>([]);
   const ws = useRef<WebSocket | null>(null);
 
@@ -20,7 +20,7 @@ export default function Recorder() {
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      // streamRef.current = stream;
+      streamRef.current = stream;
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       audioChunks.current = [];
@@ -55,7 +55,7 @@ export default function Recorder() {
 
   const stopRecording = () => {
     mediaRecorderRef.current?.stop();
-    // streamRef.current?.getTracks().forEach(track => track.stop());
+    streamRef.current?.getTracks().forEach(track => track.stop());
     setIsRecording(false);
     console.log('⏹️ Dừng ghi âm');
   };
@@ -101,7 +101,6 @@ export default function Recorder() {
           {/* ✅ Sóng âm ở dưới cùng */}
           <div className="mt-4 w-full">
             <CanvasWaveform active={isRecording} reset={!isRecording} />
-            {/* <RealWaveform active={isRecording} reset={!isRecording} /> */}
           </div>
         </div>
 
