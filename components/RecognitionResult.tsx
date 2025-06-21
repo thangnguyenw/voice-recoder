@@ -84,7 +84,7 @@ export default function RecognitionResult() {
   // Trường hợp ban đầu chưa có dữ liệu
   if (!messageResult) {
     return (
-      <div className="bg-white shadow-md rounded-xl p-5 min-h-36 flex flex-col justify-center items-center text-gray-500 max-w-md mx-auto">
+      <div className="bg-white shadow-md rounded-xl p-5 min-h-[250px] flex flex-col justify-center items-center text-gray-500 max-w-md mx-auto">
         <h3 className="text-lg font-semibold mb-2 text-[#111827]">
           Recognition Result
         </h3>
@@ -113,7 +113,7 @@ export default function RecognitionResult() {
   }
 
   return (
-    <div className="bg-white shadow-md rounded-xl p-5 min-h-36 flex flex-col justify-center items-center text-gray-500 max-w-md mx-auto">
+    <div className="bg-white shadow-md rounded-xl p-5 min-h-[250px] flex flex-col justify-center items-center text-gray-500 max-w-md mx-auto">
       <h3 className="text-lg font-semibold mb-2 text-[#111827]">
         Recognition Result
       </h3>

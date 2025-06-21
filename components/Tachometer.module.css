@@ -2,8 +2,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 300px;
-  height: 300px;
+  width: 250px;
+  height: 250px;
 }
 
 .dial {
@@ -27,14 +27,13 @@
 
 .mark {
   position: absolute;
-  transform-origin: center 125px; /* Điều chỉnh bán kính để số nằm trên vòng tròn, khớp với kích thước dial */
+  transform-origin: center 110px; /* Điều chỉnh bán kính để số nằm trên vòng tròn, khớp với kích thước dial */
   font-size: 14px;
   color: #fff;
   text-align: center;
-  width: 100px; /* Tăng width để số không bị chồng lấn */
+  width: 80px; /* Tăng width để số không bị chồng lấn */
   left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) rotate(90deg);
+  top: calc(50% + 15px);
 }
 
 .redZone {
@@ -44,7 +43,7 @@
 .needle {
   position: absolute;
   width: 4px;
-  height: 100px;
+  height: 70px;
   background: red;
   top: 50%;
   left: 50%;

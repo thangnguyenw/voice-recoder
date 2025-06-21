@@ -20,7 +20,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
   const [motorRpm, setMotorRpm] = useState<number | null>(null);
   const [messageResult, setMessageResult] = useState<MessageResult | null>(null);
   const [connected, setConnected] = useState<boolean>(false);
-  const [users, setUsers] = useState<User[]>([{ name: 'thang', audioCount: 36 }, { name: 'thu', audioCount: 36 }]);
+  const [users, setUsers] = useState<User[]>([{ name: 'thang', audioCount: 36 }, { name: 'duc', audioCount: 36 }]);
 
   useEffect(() => {
     let reconnectTimeout: NodeJS.Timeout;
