@@ -5,6 +5,7 @@ import { Switch } from '@headlessui/react';
 import { Mic, MicOff } from 'lucide-react';
 import { useWebSocket } from '@/context/WebSocketContext';
 import CanvasWaveform from './CanvasWaveform';
+import AuthModal from '../modals/AuthModal';
 
 export default function Recorder() {
   const [recognitionMode, setRecognitionMode] = useState(true);
@@ -14,6 +15,8 @@ export default function Recorder() {
   const streamRef = useRef<MediaStream | null>(null);
   const audioChunks = useRef<Blob[]>([]);
   const ws = useRef<WebSocket | null>(null);
+  const [pendingSwitchValue, setPendingSwitchValue] = useState<boolean | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   const { sendAudio } = useWebSocket();
 
@@ -60,27 +63,53 @@ export default function Recorder() {
     console.log('⏹️ Dừng ghi âm');
   };
 
+  const handleToggleRecognition = (newValue: boolean) => {
+    if (!newValue) {
+      // Nếu muốn tắt thì yêu cầu xác nhận
+      setPendingSwitchValue(newValue);
+      setShowModal(true);
+    } else {
+      setRecognitionMode(true); // Nếu bật thì cho bật luôn
+    }
+  };
+
+  const handleConfirm = (username: string, password: string) => {
+    // Bạn có thể xác thực ở đây nếu cần
+    if (pendingSwitchValue === false) {
+      setRecognitionMode(false);
+    }
+    setShowModal(false);
+    setPendingSwitchValue(null);
+  };
+
   return (
     <div className="w-full">
       <div className="col-span-2 bg-white shadow-md rounded-xl p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Record audio and recognize voice</h2>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Recognize speaker mode</span>
-            <Switch
-              checked={recognitionMode}
-              onChange={setRecognitionMode}
+          <span className="text-sm text-gray-600">Recognize speaker mode</span>
+          <Switch
+            checked={recognitionMode}
+            onChange={handleToggleRecognition}
+            className={`${
+              recognitionMode ? 'bg-green-500' : 'bg-gray-300'
+            } relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
+          >
+            <span
               className={`${
-                recognitionMode ? 'bg-[#111827]' : 'bg-gray-300'
-              } relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
-            >
-              <span
-                className={`${
-                  recognitionMode ? 'translate-x-6' : 'translate-x-1'
-                } inline-block h-4 w-4 transform rounded-full bg-white transition`}
-              />
-            </Switch>
-          </div>
+                recognitionMode ? 'translate-x-6' : 'translate-x-1'
+              } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+            />
+          </Switch>
+        </div>
+
+        <AuthModal
+          show={showModal}
+          title={`Confirm switching to ${recognitionMode ? 'normal' : 'recognition'} mode`}
+          onCancel={() => setShowModal(false)}
+          onConfirm={handleConfirm}
+        />
         </div>
 
         {/* Mic status */}

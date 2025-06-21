@@ -1,21 +1,43 @@
 'use client';
-
 import { useState } from 'react';
 import { useWebSocket } from '@/context/WebSocketContext';
+import AuthModal from './modals/AuthModal';
 
 export default function UserManagement() {
-  const { users, sendMessage } = useWebSocket(); // lấy từ context
+  const { users, sendMessage } = useWebSocket();
   const [newUser, setNewUser] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [actionType, setActionType] = useState<'add' | 'remove' | null>(null);
+  const [selectedUser, setSelectedUser] = useState('');
 
-  const addUser = () => {
-    const trimmed = newUser.trim();
-    if (!trimmed || users.some(u => u.name === trimmed)) return;
-    sendMessage({ type: 'add_user', name: trimmed });
-    setNewUser('');
+  const openModal = (type: 'add' | 'remove', user: string) => {
+    setActionType(type);
+    setSelectedUser(user);
+    setShowModal(true);
   };
 
-  const removeUser = (name: string) => {
-    sendMessage({ type: 'remove_user', name });
+  const handleConfirm = (authUsername: string, authPassword: string) => {
+    // 👉 Giả định xác thực hợp lệ (bạn có thể thay bằng gọi API)
+    if (authUsername === 'admin' && authPassword === '123456') {
+      if (actionType === 'add') {
+        const trimmed = selectedUser.trim();
+        if (!trimmed || users.some((u) => u.name === trimmed)) return;
+        sendMessage({ type: 'add_user', name: trimmed });
+        setNewUser('');
+      } else if (actionType === 'remove') {
+        sendMessage({ type: 'remove_user', name: selectedUser });
+      }
+    } else {
+      alert('Sai tài khoản hoặc mật khẩu!');
+    }
+
+    resetModal();
+  };
+
+  const resetModal = () => {
+    setShowModal(false);
+    setSelectedUser('');
+    setActionType(null);
   };
 
   return (
@@ -30,7 +52,10 @@ export default function UserManagement() {
           value={newUser}
           onChange={(e) => setNewUser(e.target.value)}
         />
-        <button onClick={addUser} className="bg-black text-white px-4 py-2 rounded">
+        <button
+          onClick={() => openModal('add', newUser)}
+          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition"
+        >
           + Add
         </button>
       </div>
@@ -46,8 +71,8 @@ export default function UserManagement() {
             >
               <span>{user.name}</span>
               <button
-                onClick={() => removeUser(user.name)}
-                className="text-red-500 hover:underline"
+                onClick={() => openModal('remove', user.name)}
+                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 text-sm rounded transition"
               >
                 Delete
               </button>
@@ -55,6 +80,14 @@ export default function UserManagement() {
           ))
         )}
       </ul>
+
+      {/* Modal xác thực */}
+      <AuthModal
+        show={showModal}
+        title={`Xác nhận ${actionType === 'add' ? 'thêm' : 'xoá'} người dùng`}
+        onCancel={resetModal}
+        onConfirm={handleConfirm}
+      />
     </div>
   );
 }
