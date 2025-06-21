@@ -130,7 +130,7 @@ export default function CanvasWaveform({
       <canvas
         ref={canvasRef}
         width={600}
-        height={100}
+        height={60}
         className="rounded bg-white shadow border"
       />
     </div>

@@ -69,7 +69,7 @@ export default function UserManagement() {
               key={index}
               className="flex justify-between items-center bg-gray-100 p-2 rounded"
             >
-              <span>{user.name}</span>
+              <span>{user.name} ({user.audioCount} sound files)</span>
               <button
                 onClick={() => openModal('remove', user.name)}
                 className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 text-sm rounded transition"
