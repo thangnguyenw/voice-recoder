@@ -62,7 +62,7 @@ export default function TabNavigation() {
           Trang chủ
         </Link>
         <Link
-          href="/train"
+          href="/users"
           className="text-gray-700 hover:text-black font-medium h-full flex items-center px-3"
         >
           Huấn luyện

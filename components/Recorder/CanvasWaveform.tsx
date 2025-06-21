@@ -61,7 +61,11 @@ export default function CanvasWaveform({
   useEffect(() => {
     if (!active) {
       cancelAnimationFrame(animationRef.current!);
-      audioContextRef.current?.close();
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        audioContextRef.current.close().catch((e) => {
+          console.warn('AudioContext close error:', e);
+        });
+      }
       return;
     }
 
@@ -69,7 +73,7 @@ export default function CanvasWaveform({
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const audioCtx = new AudioContext();
       const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 512;
+      analyser.fftSize = 256;
 
       const source = audioCtx.createMediaStreamSource(stream);
       source.connect(analyser);
@@ -88,7 +92,11 @@ export default function CanvasWaveform({
 
     return () => {
       cancelAnimationFrame(animationRef.current!);
-      audioContextRef.current?.close();
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        audioContextRef.current.close().catch((e) => {
+          console.warn('AudioContext close error:', e);
+        });
+      }
     };
   }, [active]);
 
