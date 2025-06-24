@@ -33,23 +33,23 @@ export default function TabNavigation() {
 
       {/* Tabs */}
       <div className="flex space-x-6 h-full items-center">
-        <Link
+        {/* <Link
           href="/"
           className="text-gray-700 hover:text-black font-medium h-full flex items-center px-3"
         >
           Trang chủ
-        </Link>
+        </Link> */}
         <Link
           href="/users"
           className="text-gray-700 hover:text-black font-medium h-full flex items-center px-3"
         >
-          Huấn luyện
+          Language
         </Link>
         <Link
           href="/settings"
           className="text-gray-700 hover:text-black font-medium h-full flex items-center px-3"
         >
-          Cài đặt
+          Theme
         </Link>
       </div>
     </nav>

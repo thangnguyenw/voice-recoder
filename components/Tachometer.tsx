@@ -9,6 +9,11 @@ const Tachometer = () => {
   const [speed, setSpeed] = useState<number>(0);
   const animationRef = useRef<number| null>(null);
 
+  // Debug giá trị từ WebSocket
+  useEffect(() => {
+    console.log('🌀 motorRpm cập nhật từ WebSocket:', motorRpm);
+  }, [motorRpm]);
+
   useEffect(() => {
     const animate = () => {
       setSpeed((prev) => {

@@ -20,7 +20,6 @@ export default function Recorder() {
   const [showModal, setShowModal] = useState(false);
   const [buttonState, setButtonState] = useState<'off' | 'transitioning-on' | 'on' | 'transitioning-off'>('off');
 
-
   const { sendAudio } = useWebSocket();
 
   const startRecording = async () => {
