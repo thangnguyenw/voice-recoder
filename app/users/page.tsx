@@ -1,5 +1,5 @@
 'use client'
-import { useWebSocket } from "@/context/WebSocketContext";
+import { useWebSocket } from "@/contexts/WebSocketContext";
 
 export default function Page() {
   const { users } = useWebSocket(); // { "Nguyễn Văn A": 3, ... }

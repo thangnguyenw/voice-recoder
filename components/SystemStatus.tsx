@@ -1,9 +1,9 @@
 'use client';
 
-import { useWebSocket } from '@/context/WebSocketContext';
+import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useUsers } from '@/context/UsersContext';
+import { useUsers } from '@/contexts/UsersContext';
 
 const prefix = process.env.NEXT_PUBLIC_API_PREFIX;
 

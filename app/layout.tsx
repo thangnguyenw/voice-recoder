@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { WebSocketProvider } from "@/context/WebSocketContext";
+import { WebSocketProvider } from "@/contexts/WebSocketContext";
 import TabNavigation from '@/components/TabNavigation';
 import SystemStatus from '@/components/SystemStatus';
 import RecognitionResult from '@/components/RecognitionResult';
 import "./globals.css";
 import Tachometer from "@/components/Tachometer";
 import UserManagement from "@/components/UserManagement";
-import { UsersProvider } from "@/context/UsersContext";
+import { UsersProvider } from "@/contexts/UsersContext";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

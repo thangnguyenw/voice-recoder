@@ -68,7 +68,7 @@
 // }
 
 import { useEffect } from "react";
-import { useWebSocket } from "@/context/WebSocketContext"; // thay bằng đường dẫn thực tế
+import { useWebSocket } from "@/contexts/WebSocketContext"; // thay bằng đường dẫn thực tế
 import { CheckCircle2, XCircle } from "lucide-react";
 
 export default function RecognitionResult() {

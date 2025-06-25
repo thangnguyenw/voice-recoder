@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import styles from "./Tachometer.module.css";
-import { useWebSocket } from "@/context/WebSocketContext";
+import { useWebSocket } from "@/contexts/WebSocketContext";
 
 const Tachometer = () => {
   const { motorRpm } = useWebSocket(); // lấy rpm (đã chuẩn hóa từ 0 → 240)
@@ -14,22 +14,45 @@ const Tachometer = () => {
     console.log('🌀 motorRpm cập nhật từ WebSocket:', motorRpm);
   }, [motorRpm]);
 
+  // useEffect(() => {
+  //   const animate = () => {
+  //     setSpeed((prev) => {
+  //       if (motorRpm == null) return prev;
+  //       const diff = motorRpm - prev;
+  //       const step = diff * 0.1;
+  //       if (Math.abs(step) < 0.5) return motorRpm;
+  //       return prev + step;
+  //     });
+
+  //     animationRef.current = requestAnimationFrame(animate);
+  //   };
+
+  //   animationRef.current = requestAnimationFrame(animate);
+  //   return () => cancelAnimationFrame(animationRef.current!);
+  // }, [motorRpm]);
   useEffect(() => {
     const animate = () => {
       setSpeed((prev) => {
         if (motorRpm == null) return prev;
-        const diff = motorRpm - prev;
+  
+        // Tính góc từ motorRpm (0 → 540) thành -30° → 150°
+        const targetAngle = (motorRpm / 540) * 180;
+  
+        const diff = targetAngle - prev;
         const step = diff * 0.1;
-        if (Math.abs(step) < 0.5) return motorRpm;
+  
+        if (Math.abs(step) < 0.5) return targetAngle;
         return prev + step;
       });
-
+  
       animationRef.current = requestAnimationFrame(animate);
     };
-
+  
     animationRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationRef.current!);
   }, [motorRpm]);
+  
+  
 
   // Góc quay = speed + offset 45 độ như bạn đang dùng
   const rotateStyle = {

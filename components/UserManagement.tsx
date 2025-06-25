@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { useUsers } from '@/context/UsersContext';
+import { useUsers } from '@/contexts/UsersContext';
 import AuthModal from './modals/AuthModal';
 import axios from 'axios';
 
